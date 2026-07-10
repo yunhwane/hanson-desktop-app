@@ -3,6 +3,8 @@ package main
 import (
 	_ "embed"
 	"image/color"
+	"sync"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -14,6 +16,10 @@ import (
 
 	"hanson-desktop/internal/hanson"
 )
+
+// 타이핑이 멈춘 뒤 번역/화면갱신까지 기다리는 시간.
+// 키 입력마다 무거운 렌더링을 하지 않도록 이 시간만큼 디바운스합니다.
+const debounceDelay = 80 * time.Millisecond
 
 //go:embed icon.png
 var iconBytes []byte
@@ -71,15 +77,37 @@ func main() {
 	// --- 입력 / 출력 ---
 	input := widget.NewMultiLineEntry()
 	input.SetPlaceHolder("여기에 한국어를 입력하세요...\n\n예) 안녕하세요")
-	input.Wrapping = fyne.TextWrapWord
+	// TextWrapWord + Multiline 은 키 입력마다 줄바꿈을 재계산해 타이핑이 느려지는
+	// 알려진 Fyne 성능 버그(#4221, #5297)가 있습니다. 입력창은 워드랩을 꺼서
+	// 타이핑을 매끄럽게 유지합니다(긴 줄은 가로 스크롤).
+	input.Wrapping = fyne.TextWrapOff
 
 	output := widget.NewMultiLineEntry()
 	output.Wrapping = fyne.TextWrapWord
 	output.SetPlaceHolder("번역 결과가 여기에 나와슨!")
 
-	// 입력할 때마다 실시간 번역
+	// 입력 렌더링이 빠른 타이핑을 막지 않도록 번역/화면갱신을 디바운스합니다.
+	// 키를 칠 때는 타이머만 리셋하고 즉시 반환 → 입력이 매끄럽습니다.
+	// 타이핑이 잠깐 멈추면(debounceDelay) 그때 한 번만 번역해 결과를 갱신합니다.
+	var (
+		debounceMu    sync.Mutex
+		debounceTimer *time.Timer
+	)
 	input.OnChanged = func(text string) {
-		output.SetText(hanson.Translate(text))
+		debounceMu.Lock()
+		defer debounceMu.Unlock()
+		if debounceTimer != nil {
+			debounceTimer.Stop()
+		}
+		debounceTimer = time.AfterFunc(debounceDelay, func() {
+			result := hanson.Translate(text)
+			// 타이머 콜백은 별도 goroutine이므로 UI 갱신은 fyne.Do로 메인 스레드에서.
+			fyne.Do(func() {
+				if output.Text != result {
+					output.SetText(result)
+				}
+			})
+		})
 	}
 
 	// --- 버튼 ---

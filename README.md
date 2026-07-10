@@ -32,12 +32,18 @@
 
 | OS | 파일 | 실행 방법 |
 |----|------|-----------|
+| 🪟 Windows | **`HansonTranslator.exe`** (압축 없음, 추천) | 다운로드 후 **바로 더블클릭** |
 | 🪟 Windows | `HansonTranslator-windows-amd64.zip` | 압축 풀고 `.exe` 더블클릭 |
 | 🍎 macOS (Apple Silicon) | `HansonTranslator-macOS-arm64.zip` | 압축 풀고 `.app` 더블클릭 |
 
 > **⚠️ 처음 실행 시 경고가 뜰 수 있어요** (코드 서명이 없는 앱이라 그렇습니다)
 > - **Windows**: "Windows의 PC 보호" 창 → **추가 정보 → 실행**
 > - **macOS**: 앱 **우클릭 → 열기** → **열기** (최초 1회만)
+
+### 압축이 안 풀리거나 "파일이 올바르지 않다"고 할 때
+
+Windows 탐색기 기본 압축 풀기는 가끔 오작동합니다. zip을 **우클릭 → 압축 풀기**로 풀거나,
+그래도 안 되면 압축 파일 안의 `.exe`를 바탕화면 등으로 **드래그해서 꺼내** 실행하세요.
 
 ## 사용법
 
