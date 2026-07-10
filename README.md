@@ -8,6 +8,11 @@
 
 인터넷 · AI · 설치 과정 없이, 오프라인으로 즉시 번역합니다.
 
+[![CI](https://github.com/yunhwane/hanson-desktop-app/actions/workflows/ci.yml/badge.svg)](https://github.com/yunhwane/hanson-desktop-app/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/yunhwane/hanson-desktop-app?color=368A60)](https://github.com/yunhwane/hanson-desktop-app/releases/latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Go](https://img.shields.io/badge/Go-00ADD8?logo=go&logoColor=white)](https://go.dev)
+
 [![Download](https://img.shields.io/badge/⬇️_다운로드-Releases-368A60?style=for-the-badge)](https://github.com/yunhwane/hanson-desktop-app/releases/latest)
 
 </div>
@@ -111,6 +116,15 @@ hanson-desktop-app/
 └── go.mod
 ```
 
+## 기여하기
+
+기여를 환영합니다! 🐢 개발 환경 설정, 번역 규칙 추가, PR 방법은
+[CONTRIBUTING.md](CONTRIBUTING.md)를 참고하세요.
+버전별 변경 사항은 [CHANGELOG.md](CHANGELOG.md)에 정리되어 있습니다.
+
+- 🐛 버그 제보 / 💡 기능 제안: [Issues](https://github.com/yunhwane/hanson-desktop-app/issues)
+- 🤝 행동 강령: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+
 ## 라이선스
 
-[MIT](LICENSE)
+[MIT](LICENSE) © yunhwane
