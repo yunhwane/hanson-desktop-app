@@ -6,6 +6,14 @@
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-07-10
+
+### 추가
+- **릴리스 자동화** — `v*` 태그를 push하면 GitHub Actions가 macOS `.app`와
+  Windows `.exe`를 자동으로 빌드·패키징(영문 파일명)하고 릴리스에 업로드합니다.
+- 오픈소스 문서: `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, 이슈/PR 템플릿.
+- CI 워크플로우(`gofmt`/`vet`/`test`/`build`)와 README 배지.
+
 ## [1.0.1] - 2026-07-10
 
 ### 개선
@@ -30,6 +38,7 @@
 - macOS(`.app`) / Windows(`.exe`) 빌드 및 GitHub 릴리스.
 - 테스트, MIT 라이선스.
 
-[Unreleased]: https://github.com/yunhwane/hanson-desktop-app/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/yunhwane/hanson-desktop-app/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/yunhwane/hanson-desktop-app/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/yunhwane/hanson-desktop-app/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/yunhwane/hanson-desktop-app/releases/tag/v1.0.0
