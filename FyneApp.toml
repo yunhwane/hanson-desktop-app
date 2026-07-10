@@ -2,5 +2,5 @@
   Icon = "icon.png"
   Name = "한슨어 번역기"
   ID = "com.hanson.translator"
-  Version = "1.0.0"
-  Build = 6
+  Version = "1.1.0"
+  Build = 7

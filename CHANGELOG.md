@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-07-10
+
 ### 추가
 - **말투(스타일) 선택** — 상단에서 `슨체`/`누체`를 고를 수 있습니다.
   - `슨체`(기본): 마지막 음절을 `슨`으로 교체 (예: `안녕하세요` → `안녕하세슨`).
@@ -45,7 +47,8 @@
 - macOS(`.app`) / Windows(`.exe`) 빌드 및 GitHub 릴리스.
 - 테스트, MIT 라이선스.
 
-[Unreleased]: https://github.com/yunhwane/hanson-desktop-app/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/yunhwane/hanson-desktop-app/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/yunhwane/hanson-desktop-app/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/yunhwane/hanson-desktop-app/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/yunhwane/hanson-desktop-app/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/yunhwane/hanson-desktop-app/releases/tag/v1.0.0
