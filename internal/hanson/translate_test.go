@@ -2,7 +2,7 @@ package hanson
 
 import "testing"
 
-func TestTranslate(t *testing.T) {
+func TestTranslateSeun(t *testing.T) {
 	cases := []struct{ in, want string }{
 		// 마지막 음절을 무조건 '슨'으로 교체
 		{"안녕하세요", "안녕하세슨"},
@@ -27,16 +27,66 @@ func TestTranslate(t *testing.T) {
 		{"", ""},
 	}
 	for _, c := range cases {
-		if got := Translate(c.in); got != c.want {
-			t.Errorf("Translate(%q) = %q, want %q", c.in, got, c.want)
+		if got := Translate(c.in, StyleSeun); got != c.want {
+			t.Errorf("Translate(%q, 슨체) = %q, want %q", c.in, got, c.want)
+		}
+	}
+}
+
+func TestTranslateNu(t *testing.T) {
+	cases := []struct{ in, want string }{
+		// 해요체 어미 분석: 어미를 떼고 어간 + 누~
+		{"안녕하세요", "안녕하누~"}, // 하세요 -> 하
+		{"하세요", "하누~"},     // 세요 -> (어간 하)
+		{"앉으세요", "앉누~"},    // 으세요 -> 앉
+		{"먹어요", "먹누~"},     // 어요 -> 먹
+		{"좋아요", "좋누~"},     // 아요 -> 좋
+		{"학생이에요", "학생누~"},  // 이에요 -> 학생
+		{"거예요", "거누~"},     // 예요 -> 거
+		{"예쁘네요", "예쁘누~"},   // 네요 -> 예쁘
+
+		// 격식체(하십시오체)
+		{"감사합니다", "감사하누~"}, // ㅂ니다(융합) -> 하
+		{"갑니다", "가누~"},     // ㅂ니다(융합) -> 가
+		{"갑니까", "가누~"},     // ㅂ니까(융합) -> 가
+		{"먹습니다", "먹누~"},    // 습니다 -> 먹
+		{"반갑습니다", "반갑누~"},  // 습니다 -> 반갑
+
+		// 한다체 / 현재
+		{"간다", "가누~"},  // ㄴ다(융합) -> 가
+		{"한다", "하누~"},  // ㄴ다(융합) -> 하
+		{"먹는다", "먹누~"}, // 는다 -> 먹
+
+		// 1음절 어미/기타는 fallback(마지막 음절 교체)로 처리
+		{"존나 웃기네", "존나 웃기누~"}, // 네 -> 누 (교체)
+		{"좋다", "좋누~"},         // 다 -> 누 (교체)
+		{"먹었다", "먹었누~"},       // 과거형 유지: 다 -> 누
+		{"과자", "과누~"},         // 어미 아님: 마지막 음절 교체
+		{"아웃겨!", "아웃누~!"},     // 어미 아님: 겨 -> 누
+
+		// 문장부호 유지, '~' 중복 방지, 멱등
+		{"밥 먹었어요?", "밥 먹었누~?"}, // 어요 -> 먹었, 부호 뒤로
+		{"대박~", "대누~"},         // 이미 ~로 끝나면 중복 안 함
+		{"안녕하누~", "안녕하누~"},     // 멱등
+
+		// 여러 문장 / 빈 입력
+		{"아웃겨! 대박이다", "아웃누~! 대박이누~"},
+		{"", ""},
+	}
+	for _, c := range cases {
+		if got := Translate(c.in, StyleNu); got != c.want {
+			t.Errorf("Translate(%q, 누체) = %q, want %q", c.in, got, c.want)
 		}
 	}
 }
 
 func TestTranslateMultiline(t *testing.T) {
 	in := "안녕하세요\n밥 먹었어요"
-	want := "안녕하세슨\n밥 먹었어슨"
-	if got := Translate(in); got != want {
-		t.Errorf("Translate(%q) = %q, want %q", in, got, want)
+
+	if got, want := Translate(in, StyleSeun), "안녕하세슨\n밥 먹었어슨"; got != want {
+		t.Errorf("Translate(%q, 슨체) = %q, want %q", in, got, want)
+	}
+	if got, want := Translate(in, StyleNu), "안녕하누~\n밥 먹었누~"; got != want {
+		t.Errorf("Translate(%q, 누체) = %q, want %q", in, got, want)
 	}
 }
