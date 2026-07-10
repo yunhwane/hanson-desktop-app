@@ -1,0 +1,15 @@
+# 빌드 산출물 (릴리스로 배포, 저장소에는 넣지 않음)
+/fyne-cross/
+/dist/
+*.app/
+*.exe
+*.zip
+*.dmg
+hanson-app
+
+# OS
+.DS_Store
+
+# Go
+*.test
+*.out
