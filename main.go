@@ -86,6 +86,20 @@ func main() {
 	output.Wrapping = fyne.TextWrapWord
 	output.SetPlaceHolder("번역 결과가 여기에 나와슨!")
 
+	// --- 말투(스타일) 상태 ---
+	// 라디오 콜백(메인 스레드)과 디바운스 타이머 콜백(별도 goroutine)에서
+	// 함께 읽으므로 뮤텍스로 보호합니다.
+	var (
+		styleMu sync.Mutex
+		style   = hanson.Styles[0]
+	)
+	translate := func(text string) string {
+		styleMu.Lock()
+		s := style
+		styleMu.Unlock()
+		return hanson.Translate(text, s)
+	}
+
 	// 입력 렌더링이 빠른 타이핑을 막지 않도록 번역/화면갱신을 디바운스합니다.
 	// 키를 칠 때는 타이머만 리셋하고 즉시 반환 → 입력이 매끄럽습니다.
 	// 타이핑이 잠깐 멈추면(debounceDelay) 그때 한 번만 번역해 결과를 갱신합니다.
@@ -100,7 +114,7 @@ func main() {
 			debounceTimer.Stop()
 		}
 		debounceTimer = time.AfterFunc(debounceDelay, func() {
-			result := hanson.Translate(text)
+			result := translate(text)
 			// 타이머 콜백은 별도 goroutine이므로 UI 갱신은 fyne.Do로 메인 스레드에서.
 			fyne.Do(func() {
 				if output.Text != result {
@@ -109,6 +123,33 @@ func main() {
 			})
 		})
 	}
+
+	// --- 말투 선택기 (슨체 / 누체) ---
+	// 고르면 즉시 현재 입력을 다시 번역합니다.
+	styleNames := make([]string, len(hanson.Styles))
+	for i, s := range hanson.Styles {
+		styleNames[i] = s.Label
+	}
+	styleSelector := widget.NewRadioGroup(styleNames, func(selected string) {
+		styleMu.Lock()
+		for _, s := range hanson.Styles {
+			if s.Label == selected {
+				style = s
+				break
+			}
+		}
+		styleMu.Unlock()
+		// 라디오 콜백은 메인 스레드이므로 바로 갱신해도 안전합니다.
+		output.SetText(translate(input.Text))
+	})
+	styleSelector.Horizontal = true
+	styleSelector.Required = true
+	styleSelector.SetSelected(hanson.Styles[0].Label)
+
+	styleRow := container.NewHBox(
+		widget.NewLabelWithStyle("말투", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
+		styleSelector,
+	)
 
 	// --- 버튼 ---
 	copyBtn := widget.NewButtonWithIcon("결과 복사", theme.ContentCopyIcon(), func() {
@@ -136,8 +177,8 @@ func main() {
 	)
 
 	content := container.NewBorder(
-		container.NewVBox(header, widget.NewSeparator()), // 상단
-		container.NewHBox(copyBtn, clearBtn),             // 하단
+		container.NewVBox(header, styleRow, widget.NewSeparator()), // 상단
+		container.NewHBox(copyBtn, clearBtn),                       // 하단
 		nil, nil,
 		container.NewGridWithColumns(2, inputBox, outputBox), // 가운데(확장)
 	)
